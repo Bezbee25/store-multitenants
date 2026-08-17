@@ -10,15 +10,13 @@ export default {
       colors: {
         theme: {
           primary: 'var(--color-primary, #EA580C)',
-          secondary: 'var(--color-secondary, #B45309)',
+          secondary: 'var(--color-secondary, #C2410C)',
           accent: 'var(--color-accent, #F59E0B)',
-          bg: 'var(--color-bg, #0F172A)',
-          text: 'var(--color-text, #F8FAFC)',
         }
       },
       fontFamily: {
-        heading: 'var(--font-heading, "Space Grotesk", sans-serif)',
-        body: 'var(--font-body, "Inter", sans-serif)',
+        heading: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+        body: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       borderRadius: {
         custom: 'var(--border-radius, 0.75rem)'

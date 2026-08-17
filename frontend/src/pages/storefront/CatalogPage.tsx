@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Search, ShoppingBag, Filter } from 'lucide-react';
+import { Search, ShoppingBag } from 'lucide-react';
 import { useTenant } from '../../context/TenantContext';
 import { ProductCard } from '../../components/ProductCard';
 import { ProductModal } from '../../components/ProductModal';
@@ -18,14 +18,14 @@ export const CatalogPage: React.FC = () => {
       setLoading(true);
       try {
         const res = await fetch('/api/store/catalog', {
-          headers: { 'X-Tenant-Slug': tenant?.subdomain || 'smash-burger' }
+          headers: { 'X-Tenant-Slug': tenant?.subdomain || 'cbd25' }
         });
         if (res.ok) {
           const data = await res.json();
           setCategories(data.categories || []);
         }
       } catch {
-        // Fallback demo handled
+        // Handled
       } finally {
         setLoading(false);
       }
@@ -33,15 +33,11 @@ export const CatalogPage: React.FC = () => {
     fetchCatalog();
   }, [tenant?.subdomain]);
 
-  // Aggregate all products
   const allProducts: Product[] = [];
   categories.forEach((cat) => {
-    if (cat.products) {
-      allProducts.push(...cat.products);
-    }
+    if (cat.products) allProducts.push(...cat.products);
   });
 
-  // Filter products by category and search term
   const filteredProducts = allProducts.filter((prod) => {
     const matchesCategory = activeCategory === 'all' || prod.categoryId === activeCategory;
     const matchesSearch =
@@ -51,70 +47,76 @@ export const CatalogPage: React.FC = () => {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
-      {/* Header Banner */}
-      <div className="text-center max-w-2xl mx-auto space-y-3">
-        <h1 className="text-3xl sm:text-5xl font-extrabold text-white font-heading">
-          Notre Carte & Produits
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+
+      {/* Page Header */}
+      <div className="mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold font-heading text-stone-900 dark:text-stone-100">
+          Nos produits
         </h1>
-        <p className="text-sm text-slate-300">
-          Sélectionnez vos articles pour un retrait rapide en Click & Collect.
+        <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
+          {allProducts.length} article{allProducts.length > 1 ? 's' : ''} disponible{allProducts.length > 1 ? 's' : ''} en Click & Collect.
         </p>
       </div>
 
-      {/* Search & Filter Bar (Sticky) */}
-      <div className="sticky top-20 z-30 flex flex-col md:flex-row items-center justify-between gap-4 glass-card p-3 sm:p-4 rounded-2xl border border-white/10 shadow-xl backdrop-blur-xl bg-slate-950/85">
-        {/* Search input */}
-        <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            placeholder="Rechercher un produit..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
-          />
-        </div>
+      {/* Filter Bar */}
+      <div className="sticky top-16 z-30 bg-stone-50/80 dark:bg-stone-950/80 backdrop-blur-lg -mx-4 px-4 sm:-mx-6 sm:px-6 py-3 mb-6 border-b border-stone-200 dark:border-stone-800">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          {/* Search */}
+          <div className="relative w-full sm:w-64">
+            <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Rechercher..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-sm text-stone-900 dark:text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+            />
+          </div>
 
-        {/* Category Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
-          <button
-            onClick={() => setActiveCategory('all')}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
-              activeCategory === 'all'
-                ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
-            }`}
-          >
-            Tous les articles ({allProducts.length})
-          </button>
-          {categories.map((cat) => (
+          {/* Category Pills */}
+          <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-0.5">
             <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
-                activeCategory === cat.id
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                  : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
+              onClick={() => setActiveCategory('all')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                activeCategory === 'all'
+                  ? 'bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900'
+                  : 'bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-400 border border-stone-200 dark:border-stone-700 hover:bg-stone-100 dark:hover:bg-stone-700'
               }`}
             >
-              {cat.name} ({cat.products?.length || 0})
+              Tout ({allProducts.length})
             </button>
-          ))}
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.id)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                  activeCategory === cat.id
+                    ? 'bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900'
+                    : 'bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-400 border border-stone-200 dark:border-stone-700 hover:bg-stone-100 dark:hover:bg-stone-700'
+                }`}
+              >
+                {cat.name} ({cat.products?.length || 0})
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Product Grid */}
       {loading ? (
-        <div className="text-center py-20 text-slate-400 text-sm">Chargement de la carte...</div>
+        <div className="py-20 text-center">
+          <div className="w-6 h-6 border-2 border-stone-300 dark:border-stone-600 border-t-orange-500 rounded-full animate-spin mx-auto" />
+          <p className="text-sm text-stone-500 mt-3">Chargement...</p>
+        </div>
       ) : filteredProducts.length === 0 ? (
-        <div className="text-center py-20 bg-slate-900/40 rounded-3xl border border-slate-800 space-y-3">
-          <ShoppingBag className="w-10 h-10 text-slate-600 mx-auto" />
-          <p className="text-base text-slate-300 font-semibold">Aucun article trouvé</p>
-          <p className="text-xs text-slate-500">Essayez de modifier votre recherche ou filtre de catégorie.</p>
+        <div className="py-20 text-center">
+          <ShoppingBag className="w-10 h-10 text-stone-300 dark:text-stone-600 mx-auto mb-3" />
+          <p className="text-sm font-medium text-stone-700 dark:text-stone-300">Aucun article trouvé</p>
+          <p className="text-xs text-stone-500 mt-1">Modifiez votre recherche ou changez de catégorie.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {filteredProducts.map((product) => (
             <ProductCard
               key={product.id}
@@ -125,11 +127,7 @@ export const CatalogPage: React.FC = () => {
         </div>
       )}
 
-      {/* Product Customization & Add Modal */}
-      <ProductModal
-        product={selectedProduct}
-        onClose={() => setSelectedProduct(null)}
-      />
+      <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
     </div>
   );
 };

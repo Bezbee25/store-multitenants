@@ -26,7 +26,7 @@ import { FloatingCartBar } from './components/FloatingCartBar';
 // Storefront Root Layout
 const StorefrontLayout: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col justify-between">
+    <div className="min-h-screen flex flex-col justify-between bg-stone-50 dark:bg-stone-950">
       <Navbar />
       <main className="flex-grow pb-16 md:pb-0">
         <Outlet />
@@ -37,62 +37,56 @@ const StorefrontLayout: React.FC = () => {
   );
 };
 
-// Manager Sub-Layout with Side Navigation & SuperAdmin Master Switcher
+// Manager Sub-Layout
 const ManagerLayout: React.FC = () => {
   const { user, isSuperAdmin } = useAuth();
   const { tenant, currentSubdomain, switchSubdomain } = useTenant();
   const location = useLocation();
 
   const navItems = [
-    { path: '/manager/kanban', label: 'Kanban Commandes', icon: LayoutDashboard },
-    { path: '/manager/products', label: 'Produits & Stocks', icon: Package },
-    { path: '/manager/cms', label: 'Thème & CMS', icon: Palette },
-    { path: '/manager/slots', label: 'Créneaux & Horaires', icon: Clock },
-    { path: '/manager/woxxpay', label: 'Guide WoxxPay / Stripe', icon: CreditCard }
+    { path: '/manager/kanban', label: 'Commandes', icon: LayoutDashboard },
+    { path: '/manager/products', label: 'Produits', icon: Package },
+    { path: '/manager/cms', label: 'Templates', icon: Palette },
+    { path: '/manager/slots', label: 'Créneaux', icon: Clock },
+    { path: '/manager/woxxpay', label: 'Paiements', icon: CreditCard }
   ];
 
   return (
-    <div className="min-h-screen flex flex-col justify-between">
+    <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-grow space-y-4">
-        {/* Super-Admin Master Control Banner */}
-        {isSuperAdmin && (
-          <div className="p-4 rounded-2xl bg-purple-950/60 border border-purple-800/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2 text-purple-300 font-semibold">
-              <Shield className="w-4 h-4 text-purple-400" />
-              <span>
-                Mode Super-Admin Global : Vous pilotez la boutique <strong>{tenant?.name || currentSubdomain}</strong> (<code>{currentSubdomain}</code>)
-              </span>
-            </div>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 w-full flex-grow space-y-4">
 
-            <div className="flex items-center gap-3">
+        {/* SuperAdmin Banner */}
+        {isSuperAdmin && (
+          <div className="p-3 rounded-xl bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2 text-stone-600 dark:text-stone-400 font-medium">
+              <Shield className="w-4 h-4 text-orange-500" />
+              <span>Super-Admin · <strong className="text-stone-900 dark:text-stone-100">{tenant?.name || currentSubdomain}</strong></span>
+            </div>
+            <div className="flex items-center gap-2">
               <select
                 value={currentSubdomain}
                 onChange={(e) => switchSubdomain(e.target.value)}
-                className="px-3 py-1.5 rounded-xl bg-slate-900 border border-purple-700/60 text-white text-xs font-bold focus:outline-none"
+                className="px-2.5 py-1.5 rounded-lg bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-stone-900 dark:text-stone-100 text-xs font-medium focus:outline-none"
               >
-                <option value="burger">🍔 Smash Burger</option>
-                <option value="kebab">🌯 Berliner Kebab</option>
-                <option value="fleurs">🌸 Atelier Floral</option>
-                <option value="bijoux">💎 Joaillerie</option>
-                <option value="boulangerie">🥐 Boulangerie</option>
-                <option value="epicerie">🍷 Épicerie Fine</option>
-                <option value="autre">✨ Sur-Mesure</option>
-                <option value="cbd25">🌿 CBD 25</option>
+                <option value="burger">Smash Burger</option>
+                <option value="kebab">Berliner Kebab</option>
+                <option value="fleurs">Atelier Floral</option>
+                <option value="bijoux">Joaillerie</option>
+                <option value="boulangerie">Boulangerie</option>
+                <option value="epicerie">Épicerie Fine</option>
+                <option value="autre">Sur-Mesure</option>
+                <option value="cbd25">CBD 25</option>
               </select>
-
-              <Link
-                to="/admin"
-                className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition-colors whitespace-nowrap"
-              >
-                Hub Super-Admin
+              <Link to="/admin" className="px-3 py-1.5 rounded-lg bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 font-medium text-xs transition-colors hover:bg-stone-800">
+                Hub Admin
               </Link>
             </div>
           </div>
         )}
 
-        {/* Manager Secondary Navigation Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-4 border-b border-slate-800">
+        {/* Manager Nav */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-3 border-b border-stone-200 dark:border-stone-800">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
@@ -100,13 +94,13 @@ const ManagerLayout: React.FC = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
                   isActive
-                    ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
-                    : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                    ? 'bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 shadow-sm'
+                    : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-stone-900'
                 }`}
               >
-                <Icon className="w-4 h-4" />
+                <Icon className="w-3.5 h-3.5" />
                 <span>{item.label}</span>
               </Link>
             );
@@ -125,16 +119,16 @@ const AdminLayout: React.FC = () => {
   const location = useLocation();
 
   const adminNavItems = [
-    { path: '/admin', label: 'Tableau de Bord Global', icon: Shield },
-    { path: '/admin/tenants', label: 'Boutiques & Sous-domaines', icon: Store },
-    { path: '/admin/smtp', label: 'Serveur SMTP Global', icon: Clock }
+    { path: '/admin', label: 'Tableau de Bord', icon: Shield },
+    { path: '/admin/tenants', label: 'Boutiques', icon: Store },
+    { path: '/admin/smtp', label: 'SMTP', icon: Clock }
   ];
 
   return (
-    <div className="min-h-screen flex flex-col justify-between">
+    <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-grow">
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6 border-b border-slate-800">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 w-full flex-grow">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-3 mb-6 border-b border-stone-200 dark:border-stone-800">
           {adminNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
@@ -142,13 +136,13 @@ const AdminLayout: React.FC = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
                   isActive
-                    ? 'bg-purple-600 text-white shadow-md shadow-purple-600/20'
-                    : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                    ? 'bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 shadow-sm'
+                    : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-stone-900'
                 }`}
               >
-                <Icon className="w-4 h-4" />
+                <Icon className="w-3.5 h-3.5" />
                 <span>{item.label}</span>
               </Link>
             );
@@ -200,11 +194,11 @@ export const routes: RouteObject[] = [
       { path: 'smtp', element: <AdminSmtpPage /> }
     ]
   },
-  // 404 Fallback Route
+  // 404
   {
     path: '*',
     element: (
-      <div className="min-h-screen flex flex-col justify-between">
+      <div className="min-h-screen flex flex-col justify-between bg-stone-50 dark:bg-stone-950">
         <Navbar />
         <NotFoundPage />
         <Footer />

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Lock, Mail, Store, Shield, ArrowRight } from 'lucide-react';
+import { Lock, Mail, ArrowRight, User as UserIcon } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTenant } from '../../context/TenantContext';
 import { GoogleAuthButton } from '../../components/GoogleAuthButton';
@@ -26,30 +26,20 @@ export const LoginPage: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Tenant-Slug': tenant?.subdomain || 'burger'
+          'X-Tenant-Slug': tenant?.subdomain || 'cbd25'
         },
         body: JSON.stringify({ email, password, role: roleMode })
       });
 
       const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Identifiants invalides.');
-      }
+      if (!res.ok) throw new Error(data.error || 'Identifiants invalides.');
 
       login(data.token, data.user);
+      if (data.tenantSubdomain) switchSubdomain(data.tenantSubdomain);
 
-      if (data.tenantSubdomain) {
-        switchSubdomain(data.tenantSubdomain);
-      }
-
-      if (data.user.role === 'SUPERADMIN') {
-        navigate('/admin');
-      } else if (data.user.role === 'MANAGER') {
-        navigate('/manager/kanban');
-      } else {
-        navigate('/catalog');
-      }
+      if (data.user.role === 'SUPERADMIN') navigate('/admin');
+      else if (data.user.role === 'MANAGER') navigate('/manager/kanban');
+      else navigate('/catalog');
     } catch (err: any) {
       setError(err.message || 'Impossible de se connecter.');
     } finally {
@@ -65,7 +55,7 @@ export const LoginPage: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Tenant-Slug': tenant?.subdomain || 'burger'
+          'X-Tenant-Slug': tenant?.subdomain || 'cbd25'
         },
         body: JSON.stringify({ credential })
       });
@@ -74,112 +64,96 @@ export const LoginPage: React.FC = () => {
       login(data.token, data.user);
       navigate('/catalog');
     } catch (err: any) {
-      setError(err.message || 'Échec de la connexion Google.');
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
+  const roleLabels = {
+    CUSTOMER: { title: 'Connexion', subtitle: 'Accédez à vos commandes Click & Collect' },
+    MANAGER: { title: 'Espace Gérant', subtitle: 'Gérez votre boutique et vos commandes' },
+    SUPERADMIN: { title: 'Administration', subtitle: 'Supervision de la plateforme complète' },
+  };
+
   return (
-    <div className="min-h-[75vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md glass-card p-8 rounded-3xl border border-white/10 space-y-6 shadow-2xl">
-        <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto">
-            {roleMode === 'SUPERADMIN' ? <Shield className="w-6 h-6" /> : <Store className="w-6 h-6" />}
-          </div>
-          <h1 className="text-2xl font-extrabold text-white font-heading">
-            {roleMode === 'SUPERADMIN'
-              ? 'Super-Admin WoxxApp'
-              : roleMode === 'MANAGER'
-              ? 'Espace Gérant de Boutique'
-              : 'Connexion Client'}
+    <div className="min-h-[70vh] flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-sm space-y-6">
+
+        {/* Header */}
+        <div className="text-center space-y-1">
+          <h1 className="text-2xl font-bold font-heading text-stone-900 dark:text-stone-100">
+            {roleLabels[roleMode].title}
           </h1>
-          <p className="text-xs text-slate-400">
-            {roleMode === 'SUPERADMIN'
-              ? 'Supervision globale de tous les magasins de la plateforme'
-              : roleMode === 'MANAGER'
-              ? `Gestion du magasin : ${tenant?.name || 'Votre commerce'}`
-              : `Boutique : ${tenant?.name || 'Click & Collect'}`}
+          <p className="text-sm text-stone-500 dark:text-stone-400">
+            {roleLabels[roleMode].subtitle}
           </p>
         </div>
 
-        {/* Role Selector Tabs */}
-        <div className="grid grid-cols-3 gap-1.5 p-1 rounded-2xl bg-slate-900 border border-slate-800 text-xs">
-          <button
-            type="button"
-            onClick={() => setRoleMode('CUSTOMER')}
-            className={`py-2 rounded-xl font-bold transition-all ${
-              roleMode === 'CUSTOMER' ? 'bg-amber-500 text-slate-950 shadow-sm' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            Client
-          </button>
-          <button
-            type="button"
-            onClick={() => setRoleMode('MANAGER')}
-            className={`py-2 rounded-xl font-bold transition-all ${
-              roleMode === 'MANAGER' ? 'bg-amber-500 text-slate-950 shadow-sm' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            Gérant
-          </button>
-          <button
-            type="button"
-            onClick={() => setRoleMode('SUPERADMIN')}
-            className={`py-2 rounded-xl font-bold transition-all ${
-              roleMode === 'SUPERADMIN' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            SuperAdmin
-          </button>
+        {/* Role Tabs */}
+        <div className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-stone-100 dark:bg-stone-800 text-xs">
+          {(['CUSTOMER', 'MANAGER', 'SUPERADMIN'] as const).map((role) => (
+            <button
+              key={role}
+              type="button"
+              onClick={() => setRoleMode(role)}
+              className={`py-2 rounded-lg font-medium transition-colors ${
+                roleMode === role
+                  ? 'bg-white dark:bg-stone-700 text-stone-900 dark:text-stone-100 shadow-sm'
+                  : 'text-stone-500 dark:text-stone-400 hover:text-stone-700'
+              }`}
+            >
+              {role === 'CUSTOMER' ? 'Client' : role === 'MANAGER' ? 'Gérant' : 'Admin'}
+            </button>
+          ))}
         </div>
 
-        {/* Google One-Click Login for Customers */}
+        {/* Google Login for Customers */}
         {roleMode === 'CUSTOMER' && (
           <div className="space-y-4">
             <GoogleAuthButton onSuccess={handleGoogleSuccess} onError={(err) => setError(err.message)} text="signin_with" />
-            <div className="relative flex items-center justify-center">
-              <div className="border-t border-slate-800 w-full" />
-              <span className="bg-slate-950 px-3 text-[11px] text-slate-500 uppercase tracking-wider relative">
-                ou avec email
-              </span>
+            <div className="relative flex items-center">
+              <div className="flex-grow border-t border-stone-200 dark:border-stone-700" />
+              <span className="px-3 text-[11px] text-stone-400 uppercase tracking-wider">ou</span>
+              <div className="flex-grow border-t border-stone-200 dark:border-stone-700" />
             </div>
           </div>
         )}
 
+        {/* Form */}
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Email *</label>
+            <label className="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1.5">Email</label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Mail className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="email"
                 required
-                placeholder="votre.email@domaine.fr"
+                placeholder="votre@email.fr"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-xs focus:border-amber-500 focus:outline-none"
+                className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-sm text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Mot de passe *</label>
+            <label className="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1.5">Mot de passe</label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Lock className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="password"
                 required
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-xs focus:border-amber-500 focus:outline-none"
+                className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-sm text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
               />
             </div>
           </div>
 
           {error && (
-            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+            <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 text-xs">
               {error}
             </div>
           )}
@@ -187,22 +161,17 @@ export const LoginPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 px-4 rounded-xl font-bold text-xs shadow-lg transition-all flex items-center justify-center gap-2 active:scale-95 ${
-              roleMode === 'SUPERADMIN'
-                ? 'bg-purple-600 hover:bg-purple-500 text-white'
-                : 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-amber-500/20'
-            }`}
+            className="w-full py-2.5 rounded-lg bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 font-medium text-sm hover:bg-stone-800 dark:hover:bg-stone-200 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
           >
-            {loading ? 'Connexion en cours...' : 'Se connecter'}
+            {loading ? 'Connexion...' : 'Se connecter'}
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </form>
 
-        {/* Footer links */}
         {roleMode === 'CUSTOMER' && (
-          <p className="text-center text-xs text-slate-400">
+          <p className="text-center text-xs text-stone-500">
             Pas encore de compte ?{' '}
-            <Link to="/auth/register" className="text-amber-400 hover:underline font-semibold">
+            <Link to="/auth/register" className="text-orange-600 hover:text-orange-500 font-medium">
               Créer un compte
             </Link>
           </p>

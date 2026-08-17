@@ -11,60 +11,54 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
   return (
     <div
       onClick={() => onSelect(product)}
-      className="glass-card rounded-2xl overflow-hidden border border-white/10 hover:border-amber-500/50 transition-all duration-300 group cursor-pointer flex flex-col justify-between hover:shadow-xl hover:shadow-amber-500/5 hover:-translate-y-1"
+      className="bg-white dark:bg-stone-900 rounded-2xl overflow-hidden border border-stone-200 dark:border-stone-800 hover:shadow-lg hover:shadow-stone-200/50 dark:hover:shadow-stone-900/50 transition-all duration-300 cursor-pointer group flex flex-col"
     >
-      <div>
-        {/* Product Image */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-slate-900">
-          {product.imageUrl ? (
-            <img
-              src={product.imageUrl}
-              alt={product.name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-slate-600">
-              Pas d'image
-            </div>
-          )}
-          {product.preparationTimeMinutes && (
-            <div className="absolute bottom-2 left-2 bg-slate-950/80 backdrop-blur-md px-2 py-1 rounded-md text-[11px] text-slate-200 flex items-center gap-1 font-medium border border-white/10">
-              <Clock className="w-3 h-3 text-amber-400" /> {product.preparationTimeMinutes} min
-            </div>
-          )}
-          {product.options && product.options.length > 0 && (
-            <div className="absolute top-2 right-2 bg-amber-500/90 text-slate-950 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
-              Personnalisable
-            </div>
-          )}
-        </div>
-
-        {/* Product Info */}
-        <div className="p-4 sm:p-5">
-          <h3 className="font-bold text-base sm:text-lg text-white font-heading group-hover:text-amber-400 transition-colors line-clamp-1">
-            {product.name}
-          </h3>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1 line-clamp-2 leading-relaxed">
-            {product.description || 'Délicieusement préparé par nos artisans avec des ingrédients soigneusement sélectionnés.'}
-          </p>
-        </div>
+      {/* Image */}
+      <div className="relative aspect-[4/3] overflow-hidden bg-stone-100 dark:bg-stone-800">
+        {product.imageUrl ? (
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-stone-400 text-sm">
+            Pas d'image
+          </div>
+        )}
+        {product.preparationTimeMinutes && (
+          <div className="absolute bottom-2 left-2 bg-white/90 dark:bg-stone-900/90 backdrop-blur-sm px-2 py-1 rounded-md text-[11px] text-stone-700 dark:text-stone-300 flex items-center gap-1 font-medium">
+            <Clock className="w-3 h-3 text-orange-500" /> {product.preparationTimeMinutes} min
+          </div>
+        )}
       </div>
 
-      {/* Footer Price & Add Button */}
-      <div className="p-4 sm:p-5 pt-0 flex items-center justify-between mt-2">
-        <span className="text-base sm:text-xl font-extrabold text-white font-heading">
-          {(product.priceCents / 100).toFixed(2)} €
-        </span>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelect(product);
-          }}
-          className="flex items-center gap-1 text-xs font-semibold px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 transition-all shadow-md shadow-amber-500/20 active:scale-95"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          <span>Ajouter</span>
-        </button>
+      {/* Info */}
+      <div className="p-4 flex-1 flex flex-col justify-between">
+        <div>
+          <h3 className="font-semibold text-sm text-stone-900 dark:text-stone-100 font-heading line-clamp-1 group-hover:text-orange-600 transition-colors">
+            {product.name}
+          </h3>
+          <p className="text-xs text-stone-500 dark:text-stone-400 mt-1 line-clamp-2 leading-relaxed">
+            {product.description || 'Préparé avec soin par nos artisans.'}
+          </p>
+        </div>
+
+        <div className="flex items-center justify-between mt-3 pt-3 border-t border-stone-100 dark:border-stone-800">
+          <span className="text-base font-bold text-stone-900 dark:text-stone-100 font-heading">
+            {(product.priceCents / 100).toFixed(2)} €
+          </span>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect(product);
+            }}
+            className="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg bg-orange-600 hover:bg-orange-500 text-white transition-colors active:scale-95"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            Ajouter
+          </button>
+        </div>
       </div>
     </div>
   );

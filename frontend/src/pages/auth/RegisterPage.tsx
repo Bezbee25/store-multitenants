@@ -27,15 +27,13 @@ export const RegisterPage: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Tenant-Slug': tenant?.subdomain || 'burger'
+          'X-Tenant-Slug': tenant?.subdomain || 'cbd25'
         },
         body: JSON.stringify({ fullName, email, phone, password })
       });
 
       const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Erreur lors de la création du compte.');
-      }
+      if (!res.ok) throw new Error(data.error || 'Erreur lors de la création du compte.');
 
       login(data.token, data.user);
       navigate('/catalog');
@@ -54,7 +52,7 @@ export const RegisterPage: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Tenant-Slug': tenant?.subdomain || 'burger'
+          'X-Tenant-Slug': tenant?.subdomain || 'cbd25'
         },
         body: JSON.stringify({ credential, phone })
       });
@@ -63,117 +61,89 @@ export const RegisterPage: React.FC = () => {
       login(data.token, data.user);
       navigate('/catalog');
     } catch (err: any) {
-      setError(err.message || 'Échec de l\'inscription Google.');
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[75vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md glass-card p-8 rounded-3xl border border-white/10 space-y-6 shadow-2xl">
-        <div className="text-center space-y-2">
-          <h1 className="text-2xl font-extrabold text-white font-heading">
-            Créer un compte Client
+    <div className="min-h-[70vh] flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-sm space-y-6">
+
+        <div className="text-center space-y-1">
+          <h1 className="text-2xl font-bold font-heading text-stone-900 dark:text-stone-100">
+            Créer un compte
           </h1>
-          <p className="text-xs text-slate-400">
-            Pour vos commandes Click & Collect chez <strong>{tenant?.name || 'la boutique'}</strong>
+          <p className="text-sm text-stone-500 dark:text-stone-400">
+            Pour vos commandes chez <strong className="text-stone-700 dark:text-stone-300">{tenant?.name || 'la boutique'}</strong>
           </p>
         </div>
 
-        {/* Google Quick Sign-Up */}
+        {/* Google */}
         <div className="space-y-4">
           <GoogleAuthButton onSuccess={handleGoogleSuccess} onError={(err) => setError(err.message)} text="signup_with" />
-          <div className="relative flex items-center justify-center">
-            <div className="border-t border-slate-800 w-full" />
-            <span className="bg-slate-950 px-3 text-[11px] text-slate-500 uppercase tracking-wider relative">
-              ou avec email et mot de passe
-            </span>
+          <div className="relative flex items-center">
+            <div className="flex-grow border-t border-stone-200 dark:border-stone-700" />
+            <span className="px-3 text-[11px] text-stone-400 uppercase tracking-wider">ou</span>
+            <div className="flex-grow border-t border-stone-200 dark:border-stone-700" />
           </div>
         </div>
 
-        <form onSubmit={handleRegister} className="space-y-4">
+        <form onSubmit={handleRegister} className="space-y-3">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Nom complet *</label>
+            <label className="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1.5">Nom complet</label>
             <div className="relative">
-              <User className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                required
-                placeholder="Ex: Sophie Martin"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-xs focus:border-amber-500 focus:outline-none"
-              />
+              <User className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input type="text" required placeholder="Sophie Martin" value={fullName} onChange={(e) => setFullName(e.target.value)}
+                className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-sm text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500" />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Téléphone mobile *</label>
+            <label className="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1.5">Téléphone</label>
             <div className="relative">
-              <Phone className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="tel"
-                required
-                placeholder="06 12 34 56 78"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-xs focus:border-amber-500 focus:outline-none"
-              />
+              <Phone className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input type="tel" required placeholder="06 12 34 56 78" value={phone} onChange={(e) => setPhone(e.target.value)}
+                className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-sm text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500" />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Email *</label>
+            <label className="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1.5">Email</label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="email"
-                required
-                placeholder="sophie.martin@gmail.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-xs focus:border-amber-500 focus:outline-none"
-              />
+              <Mail className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input type="email" required placeholder="sophie@mail.fr" value={email} onChange={(e) => setEmail(e.target.value)}
+                className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-sm text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500" />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Mot de passe *</label>
+            <label className="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1.5">Mot de passe</label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="password"
-                required
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-xs focus:border-amber-500 focus:outline-none"
-              />
+              <Lock className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input type="password" required placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)}
+                className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-sm text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500" />
             </div>
           </div>
 
           {error && (
-            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+            <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 text-xs">
               {error}
             </div>
           )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 active:scale-95"
+          <button type="submit" disabled={loading}
+            className="w-full py-2.5 rounded-lg bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 font-medium text-sm hover:bg-stone-800 dark:hover:bg-stone-200 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 mt-2"
           >
-            {loading ? 'Création en cours...' : 'Créer mon compte'}
+            {loading ? 'Création...' : 'Créer mon compte'}
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </form>
 
-        <p className="text-center text-xs text-slate-400">
+        <p className="text-center text-xs text-stone-500">
           Déjà inscrit ?{' '}
-          <Link to="/auth/login" className="text-amber-400 hover:underline font-semibold">
-            Se connecter
-          </Link>
+          <Link to="/auth/login" className="text-orange-600 hover:text-orange-500 font-medium">Se connecter</Link>
         </p>
       </div>
     </div>
