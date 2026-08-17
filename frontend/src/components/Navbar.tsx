@@ -23,7 +23,7 @@ export const Navbar: React.FC = () => {
             Boutique Active : <strong className="text-white">[{currentSubdomain}]</strong>
           </span>
           <div className="hidden sm:flex items-center gap-1.5 ml-2">
-            <span className="text-slate-500">Changer de preset :</span>
+            <span className="text-slate-400">🎨 Modèles & Templates :</span>
             {PRESET_OPTIONS.map((p) => (
               <button
                 key={p.id}
