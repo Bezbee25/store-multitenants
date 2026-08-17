@@ -1,0 +1,184 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "darwin-arm64"]
+}
+
+enum Role {
+  CUSTOMER
+  MANAGER
+  SUPERADMIN
+}
+
+enum PaymentMethod {
+  ONLINE_WOXXPAY
+  ON_SITE
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum OrderStatus {
+  NEW
+  IN_PREPARATION
+  READY
+  COMPLETED
+  CANCELLED
+}
+
+model Tenant {
+  id                   String      @id @default(uuid())
+  subdomain            String      @unique
+  name                 String
+  tagline              String?
+  description          String?
+  themePreset          String      @default("burger") // burger, kebab, fleurs, bijoux, bakery, general
+  themeConfig          Json?       // Colors, fonts, banner overlay opacity, etc.
+  cmsConfig            Json?       // About us, highlights, custom badges, SEO meta
+  stripeAccountId      String?     // Stripe Connect Account ID for WoxxPay
+  acceptUnpaidOrders   Boolean     @default(true) // Allow Click & Collect reservation without immediate online pay
+  slotDurationMinutes  Int         @default(15)   // Duration of each pickup slot (15, 30 min)
+  maxItemsPerSlot      Int         @default(20)   // Maximum item capacity per slot
+  openingHours         Json?       // Weekly schedules [{ day: 'mon', open: '11:30', close: '22:00', closed: false }]
+  heroImageUrl         String?
+  logoUrl              String?
+  contactPhone         String?
+  contactEmail         String?
+  address              String?
+  isActive             Boolean     @default(true)
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+
+  users                User[]
+  categories           Category[]
+  products             Product[]
+  orders               Order[]
+  orderItems           OrderItem[]
+
+  @@index([subdomain])
+}
+
+model User {
+  id           String    @id @default(uuid())
+  tenantId     String?   // null for SUPERADMIN
+  tenant       Tenant?   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  email        String
+  passwordHash String?
+  googleId     String?
+  fullName     String
+  phone        String?
+  role         Role      @default(CUSTOMER)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  orders       Order[]
+
+  @@unique([tenantId, email])
+  @@index([tenantId])
+}
+
+model Category {
+  id         String    @id @default(uuid())
+  tenantId   String
+  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name       String
+  slug       String
+  orderIndex Int       @default(0)
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+
+  products   Product[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+}
+
+model Product {
+  id                     String      @id @default(uuid())
+  tenantId               String
+  tenant                 Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  categoryId             String?
+  category               Category?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  name                   String
+  description            String?
+  priceCents             Int
+  imageUrl               String?
+  imageGallery           String[]    @default([])
+  stockQuantity          Int         @default(999)
+  isAvailable            Boolean     @default(true)
+  preparationTimeMinutes Int         @default(15)
+  options                Json?       // Sizes, sauces, toppings, allergens, etc.
+  createdAt              DateTime    @default(now())
+  updatedAt              DateTime    @updatedAt
+
+  orderItems             OrderItem[]
+
+  @@index([tenantId])
+}
+
+model Order {
+  id               String        @id @default(uuid())
+  tenantId         String
+  tenant           Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  userId           String?
+  user             User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  orderNumber      String        // Ex: KB-2026-0042
+  customerName     String
+  customerEmail    String
+  customerPhone    String
+  totalCents       Int
+  paymentMethod    PaymentMethod @default(ON_SITE)
+  paymentStatus    PaymentStatus @default(PENDING)
+  orderStatus      OrderStatus   @default(NEW)
+  pickupSlotStart  DateTime
+  pickupSlotEnd    DateTime
+  woxxpayPaymentId String?
+  notes            String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  items            OrderItem[]
+
+  @@unique([tenantId, orderNumber])
+  @@index([tenantId, orderStatus])
+  @@index([tenantId, pickupSlotStart])
+}
+
+model OrderItem {
+  id              String   @id @default(uuid())
+  tenantId        String
+  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  orderId         String
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId       String?
+  product         Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productName     String
+  unitPriceCents  Int
+  quantity        Int
+  selectedOptions Json?
+
+  @@index([tenantId, orderId])
+}
+
+model GlobalConfig {
+  id                    String   @id @default("global")
+  smtpHost              String?
+  smtpPort              Int      @default(587)
+  smtpUser              String?
+  smtpPass              String?
+  smtpFromName          String?  @default("WoxxApp Stores")
+  smtpFromEmail         String?
+  smtpSecure            Boolean  @default(false)
+  allowSelfRegistration Boolean  @default(true)
+  defaultSlotDuration   Int      @default(15)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
