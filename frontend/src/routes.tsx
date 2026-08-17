@@ -20,14 +20,17 @@ import { NotFoundPage } from './pages/NotFoundPage';
 import { useAuth } from './context/AuthContext';
 import { LayoutDashboard, Package, Palette, Clock, CreditCard, Shield, Store } from 'lucide-react';
 
+import { FloatingCartBar } from './components/FloatingCartBar';
+
 // Storefront Root Layout
 const StorefrontLayout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col justify-between">
       <Navbar />
-      <main className="flex-grow">
+      <main className="flex-grow pb-16 md:pb-0">
         <Outlet />
       </main>
+      <FloatingCartBar />
       <Footer />
     </div>
   );

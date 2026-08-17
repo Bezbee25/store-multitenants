@@ -41,8 +41,11 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-lg bg-slate-900 border border-white/10 rounded-3xl overflow-hidden shadow-2xl animate-scaleUp max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
+      <div className="relative w-full max-w-lg bg-slate-900 border border-white/10 rounded-t-[2.5rem] sm:rounded-3xl overflow-hidden shadow-2xl animate-slideUp sm:animate-scaleUp max-h-[92vh] sm:max-h-[90vh] flex flex-col">
+        {/* Mobile Drag Indicator Handle */}
+        <div className="sm:hidden w-12 h-1.5 bg-slate-700 rounded-full mx-auto my-2.5 flex-shrink-0" />
+
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -52,7 +55,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
         </button>
 
         {/* Product Image Header */}
-        <div className="relative h-64 bg-slate-950 flex-shrink-0">
+        <div className="relative h-56 sm:h-64 bg-slate-950 flex-shrink-0">
           {product.imageUrl ? (
             <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
           ) : (

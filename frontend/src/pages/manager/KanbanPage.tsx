@@ -135,8 +135,10 @@ export const KanbanPage: React.FC = () => {
     updateOrderStatus(draggableId, newStatus);
   };
 
+  const [activeMobileTab, setActiveMobileTab] = useState<string>('ALL');
+
   return (
-    <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 glass-card p-6 rounded-3xl border border-white/10">
         <div>
@@ -154,7 +156,7 @@ export const KanbanPage: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={fetchOrders}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-slate-700 transition-all"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-slate-700 transition-all active:scale-95"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
             <span>Actualiser</span>
@@ -162,15 +164,56 @@ export const KanbanPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Mobile Segmented Control */}
+      <div className="flex lg:hidden items-center gap-1.5 overflow-x-auto pb-2">
+        <button
+          onClick={() => setActiveMobileTab('ALL')}
+          className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+            activeMobileTab === 'ALL'
+              ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
+              : 'bg-slate-900 text-slate-400 border border-slate-800'
+          }`}
+        >
+          Toutes ({orders.length})
+        </button>
+        {COLUMNS.map((col) => {
+          const count = orders.filter(o => o.orderStatus === col.id).length;
+          return (
+            <button
+              key={col.id}
+              onClick={() => setActiveMobileTab(col.id)}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeMobileTab === col.id
+                  ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
+                  : 'bg-slate-900 text-slate-400 border border-slate-800'
+              }`}
+            >
+              <span>{col.title.split('/')[0]}</span>
+              <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                activeMobileTab === col.id ? 'bg-slate-950 text-amber-400' : 'bg-slate-800 text-slate-300'
+              }`}>
+                {count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
       {/* Kanban Board */}
       <DragDropContext onDragEnd={handleDragEnd}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {COLUMNS.map((col) => {
+            const isVisibleOnMobile = activeMobileTab === 'ALL' || activeMobileTab === col.id;
             const columnOrders = orders.filter(o => o.orderStatus === col.id);
             const Icon = col.icon;
 
             return (
-              <div key={col.id} className="flex flex-col min-h-[600px] rounded-3xl glass border border-white/10 p-4 space-y-4">
+              <div
+                key={col.id}
+                className={`flex flex-col min-h-[500px] lg:min-h-[600px] rounded-3xl glass border border-white/10 p-4 space-y-4 ${
+                  isVisibleOnMobile ? 'block' : 'hidden lg:flex'
+                }`}
+              >
                 {/* Column Header */}
                 <div className="flex items-center justify-between pb-3 border-b border-slate-800">
                   <div className="flex items-center gap-2">
