@@ -3,6 +3,7 @@ import { Plus, Edit, Trash2, Image, Package, Check, X, ArrowLeft } from 'lucide-
 import { Product, Category } from '../../types';
 import { useTenant } from '../../context/TenantContext';
 import { useAuth } from '../../context/AuthContext';
+import { ImageDropzone } from '../../components/ImageDropzone';
 
 export const ProductsPage: React.FC = () => {
   const { tenant } = useTenant();
@@ -277,13 +278,13 @@ export const ProductsPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">URL de l'image</label>
-                <input
-                  type="url"
-                  placeholder="https://images.unsplash.com/..."
-                  value={editingProduct.imageUrl || ''}
-                  onChange={(e) => setEditingProduct({ ...editingProduct, imageUrl: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:border-amber-500 focus:outline-none"
+                <ImageDropzone
+                  label="Photo principale du produit"
+                  value={editingProduct.imageUrl}
+                  onChange={(img) => setEditingProduct({ ...editingProduct, imageUrl: img })}
+                  onRemove={() => setEditingProduct({ ...editingProduct, imageUrl: '' })}
+                  aspectRatio="video"
+                  helperText="Glissez votre photo ou cliquez pour la sélectionner (PNG, JPG, WebP)"
                 />
               </div>
 

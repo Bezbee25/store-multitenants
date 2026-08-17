@@ -3,6 +3,7 @@ import { Sparkles, Palette, Type, Layout, Image, Check, AlertCircle } from 'luci
 import { useTenant } from '../../context/TenantContext';
 import { useAuth } from '../../context/AuthContext';
 import { PRESET_OPTIONS } from '../../presets/presets';
+import { ImageDropzone } from '../../components/ImageDropzone';
 
 export const CmsThemePage: React.FC = () => {
   const { tenant, setTenant } = useTenant();
@@ -213,12 +214,13 @@ export const CmsThemePage: React.FC = () => {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-xs font-semibold text-slate-300 mb-1">URL Image de fond Hero</label>
-            <input
-              type="url"
+            <ImageDropzone
+              label="Photo de Couverture (Bannière Hero)"
               value={heroImageUrl}
-              onChange={(e) => setHeroImageUrl(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-xs focus:border-amber-500 focus:outline-none"
+              onChange={setHeroImageUrl}
+              onRemove={() => setHeroImageUrl('')}
+              aspectRatio="banner"
+              helperText="Glissez l'image de fond de votre vitrine (JPG, PNG, WebP recommandé en 16:9 ou panoramique)"
             />
           </div>
 
