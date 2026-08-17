@@ -188,16 +188,39 @@ export default async function authRoutes(app: FastifyInstance) {
     });
   });
 
-  // 3. Connexion Google OAuth / Social Login
+  // 3. Authentification Réelle Google OAuth (Google Identity Services)
   app.post('/api/auth/google', async (req, reply) => {
     const tenant = req.tenant;
     if (!tenant) {
       return reply.code(400).send({ error: 'Sous-domaine requis.' });
     }
 
-    const { email, fullName, googleId, phone } = req.body as any;
-    if (!email || !googleId) {
-      return reply.code(400).send({ error: 'Données Google incomplètes.' });
+    const { credential, phone } = req.body as { credential: string; phone?: string };
+    if (!credential) {
+      return reply.code(400).send({ error: 'Jeton d\'authentification Google (credential) manquant.' });
+    }
+
+    let email: string;
+    let fullName: string;
+    let googleId: string;
+
+    try {
+      // 1. Vérification via l'API officielle Google TokenInfo
+      const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`);
+      if (!response.ok) {
+        throw new Error('Jeton Google invalide ou expiré.');
+      }
+      const payload: any = await response.json();
+
+      if (!payload || !payload.email) {
+        return reply.code(400).send({ error: 'Compte Google sans email valide.' });
+      }
+
+      email = payload.email.toLowerCase().trim();
+      fullName = payload.name || payload.given_name || email.split('@')[0];
+      googleId = payload.sub;
+    } catch (err: any) {
+      return reply.code(401).send({ error: 'Échec de la validation du compte Google.', details: err.message });
     }
 
     let user = await prisma.user.findUnique({
@@ -214,7 +237,7 @@ export default async function authRoutes(app: FastifyInstance) {
         data: {
           tenantId: tenant.id,
           email,
-          fullName: fullName || email.split('@')[0],
+          fullName,
           googleId,
           phone: phone || '',
           role: 'CUSTOMER'

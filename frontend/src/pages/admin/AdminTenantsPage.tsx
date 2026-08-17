@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Store, Plus, Power, ExternalLink, X, Check, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useTenant } from '../../context/TenantContext';
 import { PRESET_OPTIONS } from '../../presets/presets';
 
 export const AdminTenantsPage: React.FC = () => {
   const { token } = useAuth();
+  const { switchSubdomain } = useTenant();
+  const navigate = useNavigate();
   const [tenants, setTenants] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -163,12 +167,23 @@ export const AdminTenantsPage: React.FC = () => {
                       </span>
                     </td>
                     <td className="py-4 px-6 text-right space-x-2">
+                      <button
+                        onClick={() => {
+                          switchSubdomain(t.subdomain);
+                          navigate('/manager/kanban');
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-md shadow-purple-600/20 transition-all active:scale-95"
+                        title="Prendre le contrôle de ce magasin en tant que SuperAdmin"
+                      >
+                        <Store className="w-3.5 h-3.5" />
+                        <span>Gérer ce magasin</span>
+                      </button>
                       <a
                         href={`http://localhost:5173/?tenant=${t.subdomain}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-2 inline-block rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
-                        title="Ouvrir la boutique"
+                        title="Ouvrir la vitrine"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
                       </a>

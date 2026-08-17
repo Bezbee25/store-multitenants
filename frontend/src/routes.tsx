@@ -18,6 +18,7 @@ import { AdminTenantsPage } from './pages/admin/AdminTenantsPage';
 import { AdminSmtpPage } from './pages/admin/AdminSmtpPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { useAuth } from './context/AuthContext';
+import { useTenant } from './context/TenantContext';
 import { LayoutDashboard, Package, Palette, Clock, CreditCard, Shield, Store } from 'lucide-react';
 
 import { FloatingCartBar } from './components/FloatingCartBar';
@@ -36,9 +37,10 @@ const StorefrontLayout: React.FC = () => {
   );
 };
 
-// Manager Sub-Layout with Side Navigation
+// Manager Sub-Layout with Side Navigation & SuperAdmin Master Switcher
 const ManagerLayout: React.FC = () => {
-  const { user } = useAuth();
+  const { user, isSuperAdmin } = useAuth();
+  const { tenant, currentSubdomain, switchSubdomain } = useTenant();
   const location = useLocation();
 
   const navItems = [
@@ -52,9 +54,45 @@ const ManagerLayout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col justify-between">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-grow">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-grow space-y-4">
+        {/* Super-Admin Master Control Banner */}
+        {isSuperAdmin && (
+          <div className="p-4 rounded-2xl bg-purple-950/60 border border-purple-800/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2 text-purple-300 font-semibold">
+              <Shield className="w-4 h-4 text-purple-400" />
+              <span>
+                Mode Super-Admin Global : Vous pilotez la boutique <strong>{tenant?.name || currentSubdomain}</strong> (<code>{currentSubdomain}</code>)
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <select
+                value={currentSubdomain}
+                onChange={(e) => switchSubdomain(e.target.value)}
+                className="px-3 py-1.5 rounded-xl bg-slate-900 border border-purple-700/60 text-white text-xs font-bold focus:outline-none"
+              >
+                <option value="burger">🍔 Smash Burger</option>
+                <option value="kebab">🌯 Berliner Kebab</option>
+                <option value="fleurs">🌸 Atelier Floral</option>
+                <option value="bijoux">💎 Joaillerie</option>
+                <option value="boulangerie">🥐 Boulangerie</option>
+                <option value="epicerie">🍷 Épicerie Fine</option>
+                <option value="autre">✨ Sur-Mesure</option>
+                <option value="cbd25">🌿 CBD 25</option>
+              </select>
+
+              <Link
+                to="/admin"
+                className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition-colors whitespace-nowrap"
+              >
+                Hub Super-Admin
+              </Link>
+            </div>
+          </div>
+        )}
+
         {/* Manager Secondary Navigation Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6 border-b border-slate-800">
+        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-4 border-b border-slate-800">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
