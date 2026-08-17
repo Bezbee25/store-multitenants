@@ -230,7 +230,7 @@ export default async function managerRoutes(app: FastifyInstance) {
 
     const preset = PRESETS[presetId];
     if (!preset) {
-      return reply.code(400).send({ error: 'Preset inconnu. Choix: burger, kebab, fleurs, bijoux.' });
+      return reply.code(400).send({ error: `Preset inconnu. Choix: ${Object.keys(PRESETS).join(', ')}.` });
     }
 
     // Update tenant styling & CMS

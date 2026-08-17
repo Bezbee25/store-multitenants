@@ -116,5 +116,83 @@ export const PRESET_OPTIONS: PresetMeta[] = [
     },
     heroImageUrl: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1600&q=80',
     logoUrl: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=200&q=80'
+  },
+  {
+    id: 'boulangerie',
+    name: 'Boulangerie & Pâtisserie',
+    category: 'Boulangerie',
+    tagline: 'Le bon goût du pain chaud croustillant et des douceurs faites maison.',
+    description: 'Pains au levain naturel, viennoiseries pur beurre et pâtisseries fines.',
+    themeConfig: {
+      primaryColor: '#D97706',
+      secondaryColor: '#92400E',
+      accentColor: '#F59E0B',
+      backgroundColor: '#1C1917',
+      textColor: '#FAF7F2',
+      fontHeading: 'Playfair Display, serif',
+      fontBody: 'Plus Jakarta Sans, sans-serif',
+      borderRadius: '0.875rem',
+      heroOverlayOpacity: 0.6,
+      badgeStyle: 'pill'
+    },
+    cmsConfig: {
+      aboutTitle: 'La Tradition du Vrai Levain',
+      aboutText: 'Farines bio locales, fermentation lente de 24h et cuisson sur sole de pierre.',
+      announcement: '🥐 Réservez vos viennoiseries chaudes pour le matin !'
+    },
+    heroImageUrl: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1600&q=80',
+    logoUrl: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=200&q=80'
+  },
+  {
+    id: 'epicerie',
+    name: 'Épicerie Fine & Cave',
+    category: 'Gastronomie & Vin',
+    tagline: 'Une sélection minutieuse des meilleurs terroirs et producteurs.',
+    description: 'Vins d’auteurs, huiles d’olive d’exception et terrines artisanales.',
+    themeConfig: {
+      primaryColor: '#991B1B',
+      secondaryColor: '#7F1D1D',
+      accentColor: '#D97706',
+      backgroundColor: '#0C0A09',
+      textColor: '#F5F5F4',
+      fontHeading: 'Cinzel, serif',
+      fontBody: 'Inter, sans-serif',
+      borderRadius: '0.5rem',
+      heroOverlayOpacity: 0.65,
+      badgeStyle: 'square'
+    },
+    cmsConfig: {
+      aboutTitle: 'Les Trésors du Terroir',
+      aboutText: 'Sourcing direct chez les vignerons et artisans indépendants.',
+      announcement: '🍷 Coffrets dégustation et paniers gourmands en Click & Collect.'
+    },
+    heroImageUrl: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1600&q=80',
+    logoUrl: 'https://images.unsplash.com/photo-1569919659476-f0852f6834b7?auto=format&fit=crop&w=200&q=80'
+  },
+  {
+    id: 'autre',
+    name: 'Autre / Sur-Mesure',
+    category: 'Commerce Généraliste',
+    tagline: 'Votre boutique personnalisée en ligne avec retrait rapide.',
+    description: 'Modèle polyvalent et moderne conçu pour s’adapter à n’importe quelle boutique ou atelier.',
+    themeConfig: {
+      primaryColor: '#6366F1',
+      secondaryColor: '#4F46E5',
+      accentColor: '#EC4899',
+      backgroundColor: '#0F172A',
+      textColor: '#F8FAFC',
+      fontHeading: 'Plus Jakarta Sans, sans-serif',
+      fontBody: 'Inter, sans-serif',
+      borderRadius: '1rem',
+      heroOverlayOpacity: 0.6,
+      badgeStyle: 'pill'
+    },
+    cmsConfig: {
+      aboutTitle: 'Notre Savoir-Faire & Nos Produits',
+      aboutText: 'Découvrez notre catalogue exclusif. Commandez en toute simplicité en ligne et venez récupérer vos articles.',
+      announcement: '✨ Bienvenue sur notre boutique en ligne Click & Collect !'
+    },
+    heroImageUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80',
+    logoUrl: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=200&q=80'
   }
 ];
