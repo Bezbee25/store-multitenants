@@ -18,17 +18,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [token, setToken] = useState<string | null>(localStorage.getItem('woxx_auth_token'));
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async (currentToken: string) => {
+  const fetchProfile = async (currentToken?: string | null) => {
     try {
-      const res = await fetch('/api/auth/me', {
-        headers: {
-          'Authorization': `Bearer ${currentToken}`
-        }
-      });
+      const headers: Record<string, string> = {};
+      if (currentToken) {
+        headers['Authorization'] = `Bearer ${currentToken}`;
+      }
+      const res = await fetch('/api/auth/me', { headers });
       if (res.ok) {
         const data = await res.json();
         setUser(data);
-      } else {
+      } else if (currentToken) {
         logout();
       }
     } catch {
@@ -39,11 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    if (token) {
-      fetchProfile(token);
-    } else {
-      setLoading(false);
-    }
+    fetchProfile(token);
   }, [token]);
 
   const login = (newToken: string, newUser: User) => {

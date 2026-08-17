@@ -246,24 +246,31 @@ export default async function authRoutes(app: FastifyInstance) {
     });
   });
 
-  // 4. Récupérer le profil courant
+  // 4. Récupérer le profil courant (compatible WoxxApp Proxy SSO)
   app.get('/api/auth/me', { preHandler: [authenticate] }, async (req, reply) => {
     const userPayload = req.user!;
     const user = await prisma.user.findUnique({
       where: { id: userPayload.userId }
     });
 
-    if (!user) {
-      return reply.code(404).send({ error: 'Utilisateur non trouvé.' });
+    if (user) {
+      return reply.send({
+        id: user.id,
+        email: user.email,
+        fullName: user.fullName,
+        phone: user.phone,
+        role: user.role,
+        tenantId: user.tenantId
+      });
     }
 
+    // Return proxy SSO user payload
     return reply.send({
-      id: user.id,
-      email: user.email,
-      fullName: user.fullName,
-      phone: user.phone,
-      role: user.role,
-      tenantId: user.tenantId
+      id: userPayload.userId,
+      email: userPayload.email,
+      fullName: userPayload.email.split('@')[0],
+      role: userPayload.role,
+      tenantId: userPayload.tenantId
     });
   });
 }
