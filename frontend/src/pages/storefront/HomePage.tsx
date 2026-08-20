@@ -72,7 +72,7 @@ export const HomePage: React.FC = () => {
                 {tenant?.name || 'Votre Boutique en Ligne'}
               </h1>
 
-              <p className="text-base text-stone-600 dark:text-stone-400 leading-relaxed">
+              <p className="text-base text-stone-600 dark:text-stone-400 leading-relaxed whitespace-pre-line">
                 {tenant?.tagline || 'Commandez en ligne et récupérez vos articles en quelques minutes en boutique.'}
               </p>
 
@@ -82,7 +82,7 @@ export const HomePage: React.FC = () => {
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-medium text-sm transition-colors shadow-sm group"
                 >
                   <ShoppingBag className="w-4 h-4" />
-                  Commander maintenant
+                  {tenant?.cmsConfig?.heroCtaText || 'Commander maintenant'}
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
                 <a
@@ -196,10 +196,10 @@ export const HomePage: React.FC = () => {
               <h2 className="text-2xl sm:text-3xl font-bold font-heading text-stone-900 dark:text-stone-100">
                 {tenant?.cmsConfig?.aboutTitle || 'Bienvenue dans notre boutique'}
               </h2>
-              <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
+              <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed whitespace-pre-line">
                 {tenant?.cmsConfig?.aboutText || tenant?.description || 'Nous mettons un point d\'honneur à vous offrir des produits exceptionnels, préparés avec soin et exigence.'}
               </p>
-              <div className="flex items-center gap-4 pt-2 text-xs text-stone-500">
+              <div className="flex flex-wrap items-center gap-4 pt-2 text-xs text-stone-500">
                 {tenant?.address && (
                   <span className="flex items-center gap-1.5">
                     <MapPin className="w-3.5 h-3.5 text-orange-500" /> {tenant.address}
@@ -227,17 +227,17 @@ export const HomePage: React.FC = () => {
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
         <div className="bg-stone-900 dark:bg-stone-800 rounded-2xl p-8 sm:p-12 text-center">
           <h2 className="text-xl sm:text-2xl font-bold font-heading text-white mb-3">
-            Prêt à commander ?
+            {tenant?.cmsConfig?.ctaTitle || 'Prêt à commander ?'}
           </h2>
           <p className="text-sm text-stone-400 mb-6 max-w-md mx-auto">
-            Choisissez vos articles, sélectionnez votre créneau et récupérez votre commande en boutique.
+            {tenant?.cmsConfig?.ctaText || 'Choisissez vos articles, sélectionnez votre créneau et récupérez votre commande en boutique.'}
           </p>
           <Link
             to="/catalog"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-medium text-sm transition-colors"
           >
             <ShoppingBag className="w-4 h-4" />
-            Découvrir nos produits
+            {tenant?.cmsConfig?.ctaButtonText || 'Découvrir nos produits'}
           </Link>
         </div>
       </section>

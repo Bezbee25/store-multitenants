@@ -56,10 +56,30 @@ export interface TenantThemeConfig {
 }
 
 export interface TenantCmsConfig {
+  // En-tête & Annonce
+  announcement?: string;
+  
+  // Haut de page (Hero)
+  heroCtaText?: string;
+
+  // Section À Propos / Histoire
   aboutTitle?: string;
   aboutText?: string;
+
+  // Bannière d'action (CTA bas de page)
+  ctaTitle?: string;
+  ctaText?: string;
+  ctaButtonText?: string;
+
+  // Pied de page (Footer)
+  footerDescription?: string;
+  footerHoursTitle?: string;
+  footerHoursCustomText?: string;
+  footerCopyright?: string;
+  footerBottomText?: string;
+
+  // Arguments / Avantages
   features?: Array<{ icon: string; title: string; desc: string }>;
-  announcement?: string;
 }
 
 export interface Tenant {
